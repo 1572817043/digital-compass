@@ -17,6 +17,7 @@ import com.a0000.digicompass.modules.product.service.ProductService;
 import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -112,6 +113,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void bindImage(Long productId, ProductImageBindRequest request) {
         productMapper.insertProductImage(productId, request.imageUrl(), request.imageType(), request.sortOrder() != null ? request.sortOrder() : 0);
     }

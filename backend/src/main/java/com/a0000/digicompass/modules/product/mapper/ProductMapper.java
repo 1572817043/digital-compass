@@ -272,7 +272,10 @@ public class ProductMapper {
     }
 
     public void insertProductImage(Long productId, String imageUrl, String imageType, int sortOrder) {
-        String type = imageType != null ? imageType : "GALLERY";
+        String type = imageType != null && !imageType.isBlank() ? imageType.trim().toUpperCase() : "GALLERY";
+        if ("MAIN".equals(type)) {
+            jdbc.update("DELETE FROM dc_product_image WHERE product_id = ? AND image_type = 'MAIN'", productId);
+        }
         jdbc.update("INSERT INTO dc_product_image (product_id, image_url, image_type, sort_order) VALUES (?, ?, ?, ?)",
                 productId, imageUrl, type, sortOrder);
         if ("MAIN".equals(type)) {
