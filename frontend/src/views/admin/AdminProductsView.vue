@@ -762,7 +762,8 @@ th { color: var(--muted); font-weight: 700; font-size: 12px; text-transform: upp
 .item-actions { display: flex; gap: 6px; }
 .upload-area { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
 .upload-area select { height: 36px; min-width: 120px; }
-.upload-btn { display: inline-flex; align-items: center; cursor: pointer; }
+.upload-btn.primary-button { display: inline-flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; }
+.upload-btn.primary-button:has(input:disabled) { opacity: .55; cursor: not-allowed; }
 .hint { color: var(--muted); font-size: 12px; }
 .audit-panel { margin-top: 12px; border: 1px solid #e8d7bc; border-radius: 8px; background: #fff9ef; padding: 12px; }
 .audit-panel.pass { border-color: #cfe5da; background: #f1faf5; }
