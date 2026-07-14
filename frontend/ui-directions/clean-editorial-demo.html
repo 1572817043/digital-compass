@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数码罗盘 DigiCompass - 简洁内容站 Demo</title>
+  <style>
+    :root {
+      --bg: #f6f5f2;
+      --panel: #ffffff;
+      --ink: #161616;
+      --text: #3f3f3f;
+      --muted: #77736b;
+      --line: #e1ded7;
+      --soft: #efede8;
+      --accent: #1f6f5b;
+      --warn: #a15d2b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    .page {
+      width: min(1280px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 22px 0 48px;
+    }
+
+    .topbar {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .brand strong {
+      font-size: 20px;
+      font-weight: 850;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .nav a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 42px;
+      align-items: end;
+      padding: 56px 0 32px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      margin-bottom: 14px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(40px, 5vw, 72px);
+      line-height: 1.02;
+      font-weight: 820;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 18px 0 0;
+      max-width: 650px;
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.85;
+    }
+
+    .search-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .search-panel label {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      margin-bottom: 8px;
+    }
+
+    .search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    .search-row input {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0 13px;
+      color: var(--ink);
+      background: #fbfaf8;
+      font: inherit;
+    }
+
+    .search-row button,
+    .plain-button {
+      height: 44px;
+      border: 1px solid var(--ink);
+      border-radius: 6px;
+      background: var(--ink);
+      color: #fff;
+      padding: 0 16px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fbfaf8;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr 310px;
+      gap: 22px;
+      padding-top: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .panel-head {
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-head span {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .panel-head h2 {
+      margin: 5px 0 0;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .filter-list {
+      padding: 8px 16px 16px;
+    }
+
+    .filter-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .filter-item:last-child {
+      border-bottom: 0;
+    }
+
+    .filter-item em {
+      color: var(--muted);
+      font-style: normal;
+      font-size: 12px;
+    }
+
+    .main-stack {
+      display: grid;
+      gap: 18px;
+    }
+
+    .feature {
+      display: grid;
+      grid-template-columns: 1fr 190px;
+      gap: 22px;
+      padding: 20px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .feature h2 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.22;
+    }
+
+    .feature p {
+      margin: 12px 0 18px;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta {
+      display: inline-flex;
+      height: 28px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0 9px;
+      color: var(--muted);
+      background: #fbfaf8;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .device {
+      display: grid;
+      place-items: center;
+      min-height: 160px;
+      border-radius: 6px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+    }
+
+    .device::before {
+      content: "";
+      width: 78px;
+      height: 118px;
+      border: 8px solid #202020;
+      border-radius: 20px;
+      background: #d8e0e2;
+    }
+
+    .table-card {
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      padding: 12px 14px;
+      background: #fbfaf8;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      text-align: left;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    td {
+      padding: 15px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td:first-child {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .score {
+      color: var(--accent);
+      font-weight: 850;
+    }
+
+    .side-stack {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .report {
+      padding: 16px;
+    }
+
+    .report h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .report p {
+      margin: 0;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .step span {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .price-list {
+      padding: 0 16px 12px;
+    }
+
+    .price {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .price:last-child {
+      border-bottom: 0;
+    }
+
+    .price strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .price span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .price em {
+      color: var(--warn);
+      font-style: normal;
+      font-weight: 850;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 1050px) {
+      .hero,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        display: none;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        width: min(100% - 24px, 1280px);
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        height: auto;
+        gap: 10px;
+        padding-bottom: 14px;
+      }
+
+      .hero {
+        padding-top: 32px;
+      }
+
+      .search-row,
+      .feature {
+        grid-template-columns: 1fr;
+      }
+
+      .table-card {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 680px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">
+        <strong>DigiCompass</strong>
+        <span>数码罗盘</span>
+      </div>
+      <nav class="nav" aria-label="主导航">
+        <a href="#">产品库</a>
+        <a href="#">价格行情</a>
+        <a href="#">选购报告</a>
+        <a href="#">对比工具</a>
+        <a href="#">管理端</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div>
+        <div class="kicker">数码产品选购决策平台</div>
+        <h1>把参数、价格和需求整理成一份清楚的购买建议。</h1>
+        <p>面向普通用户的数码产品信息库。用户可以查看产品参数、官方价格、二手参考价和购买链接，也可以输入预算与用途生成选购报告。</p>
+      </div>
+
+      <aside class="search-panel">
+        <label for="search">输入你的需求</label>
+        <div class="search-row">
+          <input id="search" value="预算 4000，拍照多，小屏手机" />
+          <button type="button">生成建议</button>
+        </div>
+        <div class="chips">
+          <span class="chip">学生党</span>
+          <span class="chip">拍照优先</span>
+          <span class="chip">二手可接受</span>
+          <span class="chip">续航优先</span>
+        </div>
+      </aside>
+    </section>
+
+    <section class="layout">
+      <aside class="panel">
+        <div class="panel-head">
+          <span>Browse</span>
+          <h2>分类筛选</h2>
+        </div>
+        <div class="filter-list">
+          <div class="filter-item">手机 <em>128 款</em></div>
+          <div class="filter-item">笔记本 <em>64 款</em></div>
+          <div class="filter-item">耳机 <em>42 款</em></div>
+          <div class="filter-item">平板 <em>36 款</em></div>
+          <div class="filter-item">智能穿戴 <em>29 款</em></div>
+          <div class="filter-item">二手行情 <em>每周更新</em></div>
+        </div>
+      </aside>
+
+      <section class="main-stack">
+        <article class="feature">
+          <div>
+            <div class="kicker">今日推荐</div>
+            <h2>小米 14：预算内的小屏性能旗舰。</h2>
+            <p>推荐给想要小尺寸、性能强、拍照均衡的用户。相比同价位新机，它的二手参考价更低；相比 iPhone 15，它在快充和性能释放上更有优势。</p>
+            <div class="meta-row">
+              <span class="meta">官方价 4299 起</span>
+              <span class="meta">二手参考 2800-3400</span>
+              <span class="meta">推荐度 88</span>
+            </div>
+          </div>
+          <div class="device" aria-hidden="true"></div>
+        </article>
+
+        <section class="panel table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>产品</th>
+                <th>适合人群</th>
+                <th>官方价</th>
+                <th>二手参考</th>
+                <th>推荐度</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>小米 14</td>
+                <td>小屏旗舰、游戏、拍照均衡</td>
+                <td>4299 起</td>
+                <td>2800-3400</td>
+                <td class="score">88</td>
+              </tr>
+              <tr>
+                <td>iPhone 15</td>
+                <td>iOS 生态、视频、长期使用</td>
+                <td>5999 起</td>
+                <td>3900-4600</td>
+                <td class="score">86</td>
+              </tr>
+              <tr>
+                <td>荣耀 Magic6</td>
+                <td>续航、护眼、长焦拍摄</td>
+                <td>4399 起</td>
+                <td>3000-3600</td>
+                <td class="score">84</td>
+              </tr>
+              <tr>
+                <td>MacBook Air M2</td>
+                <td>学生、办公、轻剪辑</td>
+                <td>7999 起</td>
+                <td>4800-5900</td>
+                <td class="score">82</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+
+      <aside class="side-stack">
+        <section class="panel report">
+          <div class="kicker">AI 选购报告</div>
+          <h3>不是聊天框，而是一份结论清楚的报告。</h3>
+          <p>系统根据用户需求，从产品库、参数库、价格库和知识库中召回候选产品，再给出推荐理由与风险提醒。</p>
+          <div class="steps">
+            <div class="step"><span>1</span><div>解析预算、用途、品牌偏好和二手接受度。</div></div>
+            <div class="step"><span>2</span><div>筛选候选产品，计算价格和参数匹配度。</div></div>
+            <div class="step"><span>3</span><div>输出推荐、备选、放弃理由和购买提醒。</div></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <span>Market</span>
+            <h2>二手参考价</h2>
+          </div>
+          <div class="price-list">
+            <div class="price">
+              <div><strong>iPhone 15</strong><span>128G / 国行</span></div>
+              <em>3900-4600</em>
+            </div>
+            <div class="price">
+              <div><strong>小米 14</strong><span>256G / 成色良好</span></div>
+              <em>2800-3400</em>
+            </div>
+            <div class="price">
+              <div><strong>MacBook Air M2</strong><span>8+256 / 轻办公</span></div>
+              <em>4800-5900</em>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </section>
+  </main>
+</body>
+</html>

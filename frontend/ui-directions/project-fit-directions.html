@@ -1,0 +1,906 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数码罗盘 - 贴合项目的首页风格稿</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --text: #334155;
+      --muted: #64748b;
+      --soft: #f6f7f9;
+      --line: #dfe3ea;
+      --blue: #2563eb;
+      --green: #1f8a5b;
+      --amber: #b7791f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #171717;
+      color: #f8fafc;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    .board {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 30px 26px 54px;
+    }
+
+    .board-head {
+      display: grid;
+      grid-template-columns: 1fr 430px;
+      gap: 40px;
+      align-items: end;
+      border-bottom: 1px solid #303030;
+      padding-bottom: 24px;
+      margin-bottom: 30px;
+    }
+
+    .eyebrow {
+      color: #a3a3a3;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0 0;
+      font-size: clamp(30px, 4vw, 54px);
+      line-height: 1.05;
+    }
+
+    .board-note {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.8;
+      text-align: right;
+    }
+
+    .stack {
+      display: grid;
+      gap: 34px;
+    }
+
+    .direction {
+      background: #202020;
+      border: 1px solid #333;
+      padding: 16px;
+    }
+
+    .direction-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 2px 14px;
+      color: #a3a3a3;
+      font-size: 13px;
+    }
+
+    .direction-title strong {
+      color: #fff;
+      font-size: 15px;
+    }
+
+    .screen {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1440 / 940;
+      overflow: hidden;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .topbar {
+      position: absolute;
+      left: 56px;
+      right: 56px;
+      top: 28px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+      z-index: 2;
+    }
+
+    .brand {
+      font-weight: 850;
+      font-size: 19px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 28px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .btn {
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--ink);
+      background: var(--ink);
+      color: #fff;
+      padding: 0 16px;
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .btn.secondary {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line);
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .phone {
+      position: relative;
+      width: 74px;
+      height: 108px;
+      border-radius: 18px;
+      background: #111827;
+      border: 6px solid #e5e7eb;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #334155;
+    }
+
+    .laptop {
+      width: 116px;
+      height: 76px;
+      border-radius: 8px 8px 2px 2px;
+      background: #cbd5e1;
+      border: 8px solid #475569;
+      border-bottom-width: 12px;
+    }
+
+    .earbud {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      border: 12px solid #dbeafe;
+      background: #fff;
+      position: relative;
+    }
+
+    .earbud::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 58px;
+      border-radius: 12px;
+      background: #dbeafe;
+      left: 28px;
+      top: 30px;
+      transform: rotate(-18deg);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fff;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .style-a {
+      background: #f7f8fa;
+    }
+
+    .style-a .hero {
+      position: absolute;
+      left: 56px;
+      right: 56px;
+      top: 124px;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 44px;
+    }
+
+    .style-a h2 {
+      margin: 0;
+      max-width: 720px;
+      font-size: clamp(42px, 5.4vw, 68px);
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .style-a .lead {
+      width: 620px;
+      color: var(--text);
+      margin: 26px 0 34px;
+      font-size: 17px;
+      line-height: 1.85;
+    }
+
+    .search-box {
+      width: 720px;
+      height: 68px;
+      display: grid;
+      grid-template-columns: 1fr 118px;
+      align-items: center;
+      padding-left: 24px;
+      background: #fff;
+      border: 1px solid #cfd6df;
+      border-radius: 8px;
+      color: #94a3b8;
+      font-size: 16px;
+    }
+
+    .search-box .btn {
+      margin-right: 12px;
+      border-radius: 5px;
+      border: 0;
+      background: var(--blue);
+    }
+
+    .trend-card {
+      padding: 24px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .trend-card h3 {
+      margin: 0 0 18px;
+      font-size: 18px;
+    }
+
+    .trend-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .trend-row strong {
+      color: var(--ink);
+    }
+
+    .product-strip {
+      position: absolute;
+      left: 56px;
+      right: 56px;
+      bottom: 58px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .product-card {
+      min-height: 198px;
+      padding: 22px;
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 18px;
+      align-items: start;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .product-card h4 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .product-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .price {
+      margin-top: 22px;
+      font-size: 23px;
+      font-weight: 850;
+      color: var(--ink);
+    }
+
+    .style-b {
+      background: #ffffff;
+    }
+
+    .workspace {
+      position: absolute;
+      left: 56px;
+      right: 56px;
+      top: 120px;
+      bottom: 54px;
+      display: grid;
+      grid-template-columns: 340px 1fr 340px;
+      gap: 20px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      padding: 24px;
+    }
+
+    .panel h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .panel .hint {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .requirement {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      padding: 14px 14px 13px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #f8fafc;
+    }
+
+    .field span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 750;
+      margin-bottom: 7px;
+    }
+
+    .field strong {
+      font-size: 14px;
+    }
+
+    .report {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 18px;
+    }
+
+    .report-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .score {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      color: var(--green);
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .recommend-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .recommend-item {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 70px 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .recommend-item h4 {
+      margin: 0 0 6px;
+      font-size: 17px;
+    }
+
+    .recommend-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .rank {
+      color: var(--blue);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .risk-list {
+      display: grid;
+      gap: 13px;
+      margin-top: 22px;
+    }
+
+    .risk {
+      padding: 14px;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 6px;
+      color: #78350f;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .style-c {
+      background: #f3f5f8;
+    }
+
+    .style-c .topbar {
+      border-bottom-color: #cfd6df;
+    }
+
+    .data-layout {
+      position: absolute;
+      left: 48px;
+      right: 48px;
+      top: 116px;
+      bottom: 48px;
+      display: grid;
+      grid-template-columns: 250px 1fr 320px;
+      gap: 18px;
+    }
+
+    .sidebar {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 6px;
+      padding: 22px;
+    }
+
+    .sidebar h3 {
+      margin: 0 0 20px;
+      font-size: 18px;
+    }
+
+    .side-item {
+      height: 38px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #eef1f5;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .main-table {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .table-title {
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 26px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table-title h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 800;
+      background: #f8fafc;
+    }
+
+    th, td {
+      padding: 18px 20px;
+      border-bottom: 1px solid #edf0f4;
+    }
+
+    td strong {
+      font-size: 15px;
+    }
+
+    .mini-score {
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .assistant-panel {
+      background: #111827;
+      color: #fff;
+      border-radius: 6px;
+      padding: 24px;
+    }
+
+    .assistant-panel h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .assistant-panel p {
+      color: #cbd5e1;
+      font-size: 13px;
+      line-height: 1.75;
+      margin: 0;
+    }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+      margin: 26px 0;
+    }
+
+    .flow-step {
+      padding: 13px 14px;
+      border: 1px solid #334155;
+      border-radius: 5px;
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .market {
+      margin-top: 26px;
+      padding: 16px;
+      background: #1f2937;
+      border: 1px solid #334155;
+      border-radius: 5px;
+    }
+
+    .market strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    @media (max-width: 920px) {
+      .board {
+        padding: 18px 12px 34px;
+      }
+
+      .board-head {
+        grid-template-columns: 1fr;
+      }
+
+      .board-note {
+        text-align: left;
+      }
+
+      .direction {
+        padding: 10px;
+      }
+
+      .direction-title {
+        display: block;
+      }
+
+      .screen {
+        aspect-ratio: 1440 / 940;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="board-head">
+      <div>
+        <div class="eyebrow">DigiCompass project-fit directions</div>
+        <h1>贴合数码选购项目的首页风格</h1>
+      </div>
+      <div class="board-note">
+        这版不走炫酷发布页，也不走后台管理系统。目标是像真实的数码工具站：能查产品、能比参数、能看价格，AI 只是帮助用户生成解释和推荐。
+      </div>
+    </header>
+
+    <section class="stack">
+      <article class="direction">
+        <div class="direction-title">
+          <strong>01 清爽数码信息库型</strong>
+          <span>主站首页最稳，像少数派内容感 + 产品库工具</span>
+        </div>
+        <div class="screen style-a">
+          <header class="topbar">
+            <div class="brand">数码罗盘 DigiCompass</div>
+            <nav class="nav">
+              <span>产品库</span>
+              <span>参数对比</span>
+              <span>价格行情</span>
+              <span>AI 选购助手</span>
+            </nav>
+            <button class="btn">开始选购</button>
+          </header>
+
+          <section class="hero">
+            <div>
+              <h2>查产品、比参数、看行情，再让 AI 帮你做选择</h2>
+              <p class="lead">面向普通用户的数码产品选购工具。页面重点不是展示 AI，而是把产品信息、官方价格、二手参考价和推荐理由讲清楚。</p>
+              <div class="search-box">
+                <span>搜索产品，或输入：预算 4500，拍照好，续航稳</span>
+                <button class="btn">生成推荐</button>
+              </div>
+            </div>
+
+            <aside class="trend-card">
+              <h3>今日关注</h3>
+              <div class="trend-row"><span><strong>iPhone 15</strong><br />二手参考价稳定</span><span>¥3,800+</span></div>
+              <div class="trend-row"><span><strong>小米 14</strong><br />性价比评分上升</span><span>89 分</span></div>
+              <div class="trend-row"><span><strong>MacBook Air</strong><br />学生党高频对比</span><span>12k 次</span></div>
+            </aside>
+          </section>
+
+          <section class="product-strip">
+            <article class="product-card">
+              <div class="phone"></div>
+              <div>
+                <h4>iPhone 15</h4>
+                <p>A16 / 48MP / 官方价与二手行情</p>
+                <div class="price">¥5,999</div>
+              </div>
+            </article>
+            <article class="product-card">
+              <div class="phone" style="background:#052e16;border-color:#bbf7d0"></div>
+              <div>
+                <h4>小米 14</h4>
+                <p>8 Gen 3 / 徕卡影像 / 性价比候选</p>
+                <div class="price">¥3,999</div>
+              </div>
+            </article>
+            <article class="product-card">
+              <div class="laptop"></div>
+              <div>
+                <h4>MacBook Air</h4>
+                <p>M3 / 轻办公 / 学生党常用对比</p>
+                <div class="price">¥7,999</div>
+              </div>
+            </article>
+            <article class="product-card">
+              <div class="earbud"></div>
+              <div>
+                <h4>AirPods Pro</h4>
+                <p>降噪 / 通勤 / 官方渠道</p>
+                <div class="price">¥1,899</div>
+              </div>
+            </article>
+          </section>
+        </div>
+      </article>
+
+      <article class="direction">
+        <div class="direction-title">
+          <strong>02 选购决策工具型</strong>
+          <span>最贴合“AI 推荐工作流”，但不会像 AI 官网</span>
+        </div>
+        <div class="screen style-b">
+          <header class="topbar">
+            <div class="brand">DigiCompass</div>
+            <nav class="nav">
+              <span>首页</span>
+              <span>手机</span>
+              <span>笔记本</span>
+              <span>对比</span>
+              <span>行情</span>
+            </nav>
+            <button class="btn secondary">登录</button>
+          </header>
+
+          <section class="workspace">
+            <aside class="panel">
+              <h3>我的需求</h3>
+              <p class="hint">用用户能理解的方式填写，不把 AI 做成主角。</p>
+              <div class="requirement">
+                <div class="field"><span>预算</span><strong>3000 - 5000 元</strong></div>
+                <div class="field"><span>主要用途</span><strong>拍照、日常、轻游戏</strong></div>
+                <div class="field"><span>偏好</span><strong>续航稳定、别太重</strong></div>
+                <div class="field"><span>购买渠道</span><strong>官方购买 + 二手参考</strong></div>
+              </div>
+              <div style="margin-top:22px">
+                <button class="btn">生成选购报告</button>
+              </div>
+            </aside>
+
+            <main class="panel report">
+              <div class="report-head">
+                <div>
+                  <h3>选购报告</h3>
+                  <p class="hint">推荐结果必须能解释，也要说明不推荐原因。</p>
+                </div>
+                <div class="score">86</div>
+              </div>
+              <div class="recommend-list">
+                <article class="recommend-item">
+                  <div class="phone"></div>
+                  <div>
+                    <h4>iPhone 15</h4>
+                    <p>影像与保值均衡，适合长期使用；缺点是价格不算低。</p>
+                  </div>
+                  <div class="rank">01</div>
+                </article>
+                <article class="recommend-item">
+                  <div class="phone" style="background:#052e16;border-color:#bbf7d0"></div>
+                  <div>
+                    <h4>小米 14</h4>
+                    <p>性能价格比更好，适合在预算内追求配置的用户。</p>
+                  </div>
+                  <div class="rank">02</div>
+                </article>
+                <article class="recommend-item">
+                  <div class="phone" style="background:#422006;border-color:#fde68a"></div>
+                  <div>
+                    <h4>旧款旗舰</h4>
+                    <p>二手价低，但电池健康、维修记录、成色风险较高。</p>
+                  </div>
+                  <div class="rank">慎选</div>
+                </article>
+              </div>
+            </main>
+
+            <aside class="panel">
+              <h3>风险提醒</h3>
+              <p class="hint">AI 模块更像报告解释器，不像聊天机器人。</p>
+              <div class="risk-list">
+                <div class="risk">二手价格只作为参考区间，不展示实时抓取商品。</div>
+                <div class="risk">推荐理由需要落到参数、价格、保值率和使用场景。</div>
+                <div class="risk">不推荐原因同样展示，避免黑盒推荐。</div>
+              </div>
+            </aside>
+          </section>
+        </div>
+      </article>
+
+      <article class="direction">
+        <div class="direction-title">
+          <strong>03 参数对比信息站型</strong>
+          <span>技术和数据感最强，适合毕业设计答辩展示</span>
+        </div>
+        <div class="screen style-c">
+          <header class="topbar">
+            <div class="brand">数码罗盘 / 产品对比</div>
+            <nav class="nav">
+              <span>手机</span>
+              <span>电脑</span>
+              <span>耳机</span>
+              <span>行情</span>
+            </nav>
+            <button class="btn">AI 分析</button>
+          </header>
+
+          <section class="data-layout">
+            <aside class="sidebar">
+              <h3>筛选条件</h3>
+              <div class="side-item">预算：3000 - 5000</div>
+              <div class="side-item">影像优先</div>
+              <div class="side-item">续航稳定</div>
+              <div class="side-item">重量小于 200g</div>
+              <div class="side-item">支持官方购买</div>
+              <div style="margin-top:24px;display:flex;flex-wrap:wrap;gap:8px">
+                <span class="tag">手机</span>
+                <span class="tag">学生党</span>
+                <span class="tag">拍照</span>
+                <span class="tag">二手参考</span>
+              </div>
+            </aside>
+
+            <main class="main-table">
+              <div class="table-title">
+                <h3>手机横向对比</h3>
+                <button class="btn secondary">加入对比</button>
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>产品</th>
+                    <th>官方价</th>
+                    <th>二手参考</th>
+                    <th>处理器</th>
+                    <th>影像</th>
+                    <th>推荐</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>iPhone 15</strong></td>
+                    <td>¥5,999</td>
+                    <td>¥3,800 - ¥4,250</td>
+                    <td>A16</td>
+                    <td>48MP</td>
+                    <td class="mini-score">92</td>
+                  </tr>
+                  <tr>
+                    <td><strong>小米 14</strong></td>
+                    <td>¥3,999</td>
+                    <td>¥2,900 - ¥3,300</td>
+                    <td>8 Gen 3</td>
+                    <td>徕卡</td>
+                    <td class="mini-score">89</td>
+                  </tr>
+                  <tr>
+                    <td><strong>荣耀 Magic6</strong></td>
+                    <td>¥4,399</td>
+                    <td>¥3,100 - ¥3,600</td>
+                    <td>8 Gen 3</td>
+                    <td>长焦</td>
+                    <td class="mini-score">86</td>
+                  </tr>
+                  <tr>
+                    <td><strong>一加 12</strong></td>
+                    <td>¥4,299</td>
+                    <td>¥3,000 - ¥3,500</td>
+                    <td>8 Gen 3</td>
+                    <td>续航</td>
+                    <td class="mini-score">84</td>
+                  </tr>
+                </tbody>
+              </table>
+            </main>
+
+            <aside class="assistant-panel">
+              <h3>选购解释器</h3>
+              <p>把表格里的价格、参数和风险转换成用户能看懂的推荐理由。</p>
+              <div class="flow">
+                <div class="flow-step">1. 解析预算和使用场景</div>
+                <div class="flow-step">2. 从产品库召回候选</div>
+                <div class="flow-step">3. 按权重计算推荐分</div>
+                <div class="flow-step">4. 生成理由和风险提示</div>
+              </div>
+              <div class="market">
+                <strong>¥3,800 - ¥4,250</strong>
+                <p>二手行情参考价，基于样本价和折旧模型维护。</p>
+              </div>
+            </aside>
+          </section>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

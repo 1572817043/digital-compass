@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>数码罗盘 DigiCompass - 去 AI 味视觉方向</title>
+  <style>
+    :root {
+      --paper: #f4f1e8;
+      --ink: #111;
+      --muted: #6b7280;
+      --line: #d7d7d2;
+      --lime: #cdf400;
+      --blue: #245cff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #111;
+      color: #f5f5f5;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    .board {
+      width: min(1540px, 100%);
+      margin: 0 auto;
+      padding: 32px 28px 56px;
+    }
+
+    .board-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: end;
+      padding: 10px 0 28px;
+      border-bottom: 1px solid #2a2a2a;
+      margin-bottom: 28px;
+    }
+
+    .board-kicker {
+      font-size: 12px;
+      color: #aaa;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .board-title {
+      margin: 10px 0 0;
+      font-size: clamp(28px, 4vw, 56px);
+      line-height: 1.03;
+      font-weight: 800;
+    }
+
+    .board-note {
+      max-width: 460px;
+      color: #b5b5b5;
+      font-size: 14px;
+      line-height: 1.7;
+      text-align: right;
+    }
+
+    .directions {
+      display: grid;
+      gap: 36px;
+    }
+
+    .direction-shell {
+      border: 1px solid #2a2a2a;
+      background: #171717;
+      padding: 18px;
+    }
+
+    .direction-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      padding: 0 2px 14px;
+      color: #aaa;
+      font-size: 13px;
+    }
+
+    .direction-meta strong {
+      color: #f5f5f5;
+      font-size: 15px;
+    }
+
+    .screen {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1440 / 920;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .nav {
+      position: absolute;
+      top: 34px;
+      left: 52px;
+      right: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 5;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 34px;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .plain-btn {
+      min-height: 38px;
+      border: 1px solid currentColor;
+      padding: 10px 17px;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .solid-btn {
+      min-height: 40px;
+      border: 0;
+      padding: 11px 18px;
+      background: currentColor;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .solid-btn span {
+      color: var(--btn-text, #fff);
+    }
+
+    .a-hardware {
+      background:
+        linear-gradient(90deg, rgba(12, 43, 158, .68) 0 8%, transparent 8%),
+        linear-gradient(180deg, rgba(0, 0, 0, .2), rgba(0, 0, 0, .72)),
+        radial-gradient(circle at 42% 24%, rgba(255, 255, 255, .16), transparent 17%),
+        linear-gradient(120deg, #252a31, #0d0d0d 58%, #171717);
+      color: #f4f4f4;
+    }
+
+    .a-hardware::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(90deg, transparent 0 54px, rgba(255,255,255,.12) 55px, transparent 56px),
+        repeating-linear-gradient(0deg, transparent 0 44px, rgba(255,255,255,.08) 45px, transparent 46px);
+      opacity: .25;
+      width: 660px;
+      height: 430px;
+      left: 350px;
+      top: 0;
+    }
+
+    .a-lens {
+      position: absolute;
+      left: 320px;
+      top: 120px;
+      width: 370px;
+      height: 600px;
+      border-radius: 52% 44% 50% 48%;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.1), transparent 28%),
+        #050505;
+      opacity: .88;
+    }
+
+    .a-mega {
+      position: absolute;
+      left: 52px;
+      bottom: 108px;
+      font-size: clamp(118px, 15vw, 218px);
+      line-height: .78;
+      font-weight: 900;
+      color: var(--lime);
+    }
+
+    .a-copy {
+      position: absolute;
+      right: 118px;
+      bottom: 148px;
+      width: 330px;
+    }
+
+    .a-copy h2 {
+      margin: 0 0 26px;
+      font-size: 42px;
+      line-height: 1.08;
+    }
+
+    .a-copy p {
+      margin: 0 0 34px;
+      color: #ddd;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .a-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .b-swiss {
+      background: var(--paper);
+      color: var(--ink);
+      padding: 0;
+    }
+
+    .b-swiss .nav {
+      border-bottom: 1px solid #111;
+      padding-bottom: 22px;
+    }
+
+    .b-side {
+      position: absolute;
+      left: 64px;
+      top: 132px;
+      font-size: 12px;
+      line-height: 1.5;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .b-title {
+      position: absolute;
+      left: 64px;
+      top: 182px;
+      width: 580px;
+      font-size: clamp(54px, 7vw, 92px);
+      line-height: .98;
+      font-weight: 900;
+    }
+
+    .b-desc {
+      position: absolute;
+      left: 64px;
+      top: 430px;
+      width: 500px;
+      color: #303030;
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .b-mark {
+      position: absolute;
+      left: 64px;
+      bottom: 150px;
+      width: 178px;
+      height: 178px;
+      background: #111;
+      color: var(--paper);
+      display: grid;
+      align-content: center;
+      padding-left: 22px;
+      font-size: 24px;
+      line-height: 1.12;
+      font-weight: 900;
+    }
+
+    .b-table {
+      position: absolute;
+      right: 76px;
+      top: 140px;
+      width: 690px;
+      height: 610px;
+      border: 1px solid #111;
+      padding: 34px 32px;
+      display: grid;
+      grid-template-rows: auto repeat(5, 1fr);
+    }
+
+    .b-table h3 {
+      margin: 0 0 22px;
+      font-size: 20px;
+    }
+
+    .b-row {
+      display: grid;
+      grid-template-columns: 52px 210px 1fr 54px;
+      gap: 20px;
+      align-items: center;
+      border-top: 1px solid #111;
+      min-height: 88px;
+      font-size: 13px;
+    }
+
+    .b-row strong {
+      font-size: 27px;
+    }
+
+    .b-row .score {
+      text-align: right;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .b-bottom {
+      position: absolute;
+      left: 64px;
+      right: 76px;
+      bottom: 48px;
+      border: 1px solid #111;
+      background: #e8e0d2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      padding: 26px 32px;
+      font-size: 17px;
+      line-height: 1.55;
+      font-weight: 650;
+    }
+
+    .c-platform {
+      background: #f2f2ef;
+      color: #111;
+    }
+
+    .c-hero {
+      position: absolute;
+      left: 50%;
+      top: 176px;
+      width: min(760px, 72%);
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 3;
+    }
+
+    .c-hero h2 {
+      margin: 0;
+      font-size: clamp(34px, 4.4vw, 58px);
+      line-height: 1.08;
+      font-weight: 900;
+    }
+
+    .c-hero p {
+      margin: 28px auto 0;
+      max-width: 620px;
+      color: #555;
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .c-glow {
+      position: absolute;
+      left: 17%;
+      right: 17%;
+      top: 450px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(37, 92, 255, .75), rgba(37, 92, 255, 0) 64%);
+      filter: blur(20px);
+      z-index: 1;
+    }
+
+    .c-app {
+      position: absolute;
+      left: 17%;
+      right: 17%;
+      bottom: 78px;
+      height: 390px;
+      background: #fff;
+      border: 1px solid #d4d4d4;
+      z-index: 2;
+      display: grid;
+      grid-template-rows: 48px 1fr;
+    }
+
+    .c-toolbar {
+      border-bottom: 1px solid #d4d4d4;
+      background: #f8f8f8;
+      display: flex;
+      align-items: center;
+      padding: 0 34px;
+      color: #555;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .c-body {
+      display: grid;
+      grid-template-columns: 250px 1fr 180px;
+      gap: 30px;
+      padding: 34px;
+    }
+
+    .c-panel {
+      border: 1px solid #ddd;
+      background: #fff;
+      padding: 24px;
+    }
+
+    .c-panel.soft {
+      background: #f5f5f5;
+    }
+
+    .c-panel.dark {
+      background: #111;
+      color: #fff;
+    }
+
+    .tag {
+      border: 1px solid #d8d8d8;
+      background: #fff;
+      padding: 8px 10px;
+      margin-top: 13px;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .bars {
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      height: 86px;
+      margin-top: 24px;
+    }
+
+    .bars i {
+      width: 8px;
+      background: currentColor;
+      display: block;
+    }
+
+    .d-night {
+      background: #030303;
+      color: #f5f5f5;
+    }
+
+    .d-night .nav {
+      left: 42px;
+      right: 42px;
+    }
+
+    .d-center {
+      position: absolute;
+      left: 50%;
+      top: 116px;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 4;
+    }
+
+    .d-center h2 {
+      margin: 0 0 22px;
+      font-size: clamp(52px, 6vw, 78px);
+      line-height: .92;
+      font-weight: 900;
+    }
+
+    .d-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .photo {
+      position: absolute;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.05);
+      background: #151515;
+    }
+
+    .photo::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(255,255,255,.2), transparent 40%, rgba(0,0,0,.55));
+    }
+
+    .p1 { left: 116px; top: 210px; width: 192px; height: 110px; background: #17202b; }
+    .p2 { right: 228px; top: 126px; width: 206px; height: 106px; background: #194350; }
+    .p3 { left: 50%; top: 420px; width: 360px; height: 192px; transform: translateX(-50%); background: #233942; }
+    .p4 { left: 286px; bottom: 182px; width: 210px; height: 108px; background: #213027; }
+    .p5 { right: 274px; bottom: 158px; width: 220px; height: 166px; background: #12193a; }
+
+    .advisor {
+      position: absolute;
+      left: 50%;
+      bottom: 58px;
+      width: 550px;
+      transform: translateX(-50%);
+      border: 1px solid #282828;
+      background: #0c0c0c;
+      padding: 22px 28px 20px;
+      z-index: 5;
+    }
+
+    .advisor strong {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    .advisor p {
+      margin: 0 0 17px;
+      color: #a3a3a3;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .progress {
+      height: 2px;
+      background: #2a2a2a;
+    }
+
+    .progress span {
+      display: block;
+      width: 56%;
+      height: 2px;
+      background: #f5f5f5;
+    }
+
+    @media (max-width: 900px) {
+      .board {
+        padding: 20px 14px 36px;
+      }
+
+      .board-head {
+        grid-template-columns: 1fr;
+      }
+
+      .board-note {
+        text-align: left;
+      }
+
+      .direction-shell {
+        padding: 10px;
+      }
+
+      .direction-meta {
+        display: block;
+      }
+
+      .screen {
+        aspect-ratio: 1440 / 920;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="board-head">
+      <div>
+        <div class="board-kicker">DigiCompass visual directions</div>
+        <h1 class="board-title">数码罗盘：去 AI 味首页方向</h1>
+      </div>
+      <div class="board-note">
+        参考方向来自硬件站、设计平台站、暗色产品站和瑞士目录式信息设计。这里不复制某个站，而是把它们的骨架转成适合“数码产品选购决策平台”的页面。
+      </div>
+    </header>
+
+    <section class="directions">
+      <article class="direction-shell">
+        <div class="direction-meta">
+          <strong>01 硬件大片感</strong>
+          <span>适合：更像真实数码产品站，第一眼有品牌感</span>
+        </div>
+        <div class="screen a-hardware">
+          <nav class="nav">
+            <div>DIGICOMPASS</div>
+            <button class="plain-btn">MENU&nbsp;&nbsp;+</button>
+          </nav>
+          <div class="a-lens"></div>
+          <div class="a-mega">DIGI</div>
+          <div class="a-copy">
+            <h2>消费电子<br />选购决策平台</h2>
+            <p>产品参数、官方售价、二手行情参考、AI 需求解析，整合成一次清楚的购买判断。</p>
+            <div class="a-actions">
+              <button class="solid-btn" style="color: var(--lime); --btn-text:#101010"><span>开始选购</span></button>
+              <button class="plain-btn">查看产品库</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="direction-shell">
+        <div class="direction-meta">
+          <strong>02 瑞士目录感</strong>
+          <span>适合：信息库、参数对比、价格模型，毕业设计很稳</span>
+        </div>
+        <div class="screen b-swiss">
+          <nav class="nav">
+            <div>数码罗盘</div>
+            <div class="nav-links">
+              <span>Product Index</span>
+              <span>Compare</span>
+              <span>Market</span>
+              <span>AI Advisor</span>
+            </div>
+          </nav>
+          <div class="b-side">2026 / Buying Guide<br />Consumer Electronics</div>
+          <div class="b-title">别让参数<br />替你做决定</div>
+          <p class="b-desc">
+            建立可维护的产品信息库，再用推荐工作流把预算、场景、参数权重、价格趋势串起来。界面像一本持续更新的数码年鉴。
+          </p>
+          <div class="b-mark">AI<br />BUYER<br />FLOW</div>
+          <div class="b-table">
+            <h3>产品索引 / 手机</h3>
+            <div class="b-row"><span>01</span><strong>iPhone 15</strong><span>A16 / 48MP / ¥5999</span><span class="score">92</span></div>
+            <div class="b-row"><span>02</span><strong>Xiaomi 14</strong><span>8 Gen 3 / Leica / ¥3999</span><span class="score">89</span></div>
+            <div class="b-row"><span>03</span><strong>Magic6</strong><span>8 Gen 3 / telephoto / ¥4399</span><span class="score">86</span></div>
+            <div class="b-row"><span>04</span><strong>OnePlus 12</strong><span>8 Gen 3 / 5400mAh / ¥4299</span><span class="score">83</span></div>
+            <div class="b-row"><span>05</span><strong>Pixel 9</strong><span>Tensor / AI camera / ¥4999</span><span class="score">80</span></div>
+          </div>
+          <div class="b-bottom">
+            <span>不像后台，也不像模板站。重点是信息结构、编号、目录、对比，答辩时也好解释。</span>
+            <button class="solid-btn" style="color:#111; --btn-text:var(--paper)"><span>生成推荐</span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="direction-shell">
+        <div class="direction-meta">
+          <strong>03 极简平台感</strong>
+          <span>适合：ToC 产品感最稳，后续 Vue 实现成本低</span>
+        </div>
+        <div class="screen c-platform">
+          <nav class="nav">
+            <div>DigiCompass</div>
+            <button class="solid-btn" style="color:#111; --btn-text:#fff"><span>进入产品库</span></button>
+          </nav>
+          <div class="c-hero">
+            <h2>一个面向普通用户的<br />数码产品决策平台</h2>
+            <p>不是电商站，也不是参数堆叠。它把产品信息、价格区间、二手行情和 AI 推荐流程放进同一个可信的决策页面。</p>
+          </div>
+          <div class="c-glow"></div>
+          <div class="c-app">
+            <div class="c-toolbar">产品库 / 需求分析 / 市场行情 / 推荐报告</div>
+            <div class="c-body">
+              <div class="c-panel soft">
+                <strong>我的需求</strong>
+                <div class="tag">预算 4500</div>
+                <div class="tag">拍照优先</div>
+                <div class="tag">续航稳定</div>
+                <div class="tag">二手保值</div>
+              </div>
+              <div class="c-panel">
+                <strong>推荐报告</strong>
+                <p style="color:#555;line-height:1.7;font-size:14px;">首推 iPhone 15；备选小米 14。系统依据产品库、价格区间、用户权重给出解释，不做黑盒推荐。</p>
+                <div class="bars">
+                  <i style="height:34px"></i><i style="height:56px"></i><i style="height:42px"></i><i style="height:70px"></i><i style="height:62px"></i><i style="height:84px"></i><i style="height:58px"></i><i style="height:76px"></i>
+                </div>
+              </div>
+              <div class="c-panel dark">
+                <strong style="font-size:26px;line-height:1.2;">¥3,800<br />—<br />¥4,250</strong>
+                <p style="color:#bbb;line-height:1.7;font-size:12px;margin-top:36px;">二手参考区间<br />最后更新 07/09</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="direction-shell">
+        <div class="direction-meta">
+          <strong>04 夜间顾问感</strong>
+          <span>适合：突出 AI 工作流，但会比前三版实现成本高一点</span>
+        </div>
+        <div class="screen d-night">
+          <nav class="nav">
+            <div>DC</div>
+            <button class="plain-btn" style="width:190px;">Menu</button>
+            <button class="plain-btn">Early Access</button>
+          </nav>
+          <div class="d-center">
+            <h2>Ask before<br />you buy</h2>
+            <div class="d-actions">
+              <button class="solid-btn" style="color:#f5f5f5; --btn-text:#030303"><span>开始咨询</span></button>
+              <button class="plain-btn">查看样例</button>
+            </div>
+          </div>
+          <div class="photo p1"></div>
+          <div class="photo p2"></div>
+          <div class="photo p3"></div>
+          <div class="photo p4"></div>
+          <div class="photo p5"></div>
+          <div class="advisor">
+            <strong>预算 4500，想买拍照好、续航稳的手机</strong>
+            <p>AI 正在解析需求 → 召回产品库 → 对比参数和价格 → 输出推荐报告</p>
+            <div class="progress"><span></span></div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

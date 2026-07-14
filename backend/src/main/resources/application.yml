@@ -1,0 +1,30 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: digital-compass-backend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/digital_compass?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 123456
+  sql:
+    init:
+      mode: never
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:5175
+      - http://127.0.0.1:5175
+  jwt:
+    secret: ${JWT_SECRET:digital-compass-development-secret-at-least-32-bytes}
+    expiration-minutes: 120
+  oss:
+    endpoint: ${ALIYUN_OSS_ENDPOINT:oss-cn-beijing.aliyuncs.com}
+    bucket-name: ${ALIYUN_OSS_BUCKET:digicompass-product-assets}
+    access-key-id: ${ALIYUN_OSS_ACCESS_KEY_ID:}
+    access-key-secret: ${ALIYUN_OSS_ACCESS_KEY_SECRET:}
+  ai:
+    crypto-key: ${DIGICOMPASS_AI_CRYPTO_KEY:DevOnlyChangeMe32BytesKey!!!!!!!}

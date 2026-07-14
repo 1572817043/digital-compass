@@ -1,0 +1,19 @@
+USE digital_compass;
+
+CREATE TABLE IF NOT EXISTS dc_user_preference (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  min_budget DECIMAL(10,2) NULL,
+  max_budget DECIMAL(10,2) NULL,
+  category_id BIGINT UNSIGNED NULL,
+  brand_ids VARCHAR(255) NULL,
+  usage_scenes VARCHAR(500) NULL,
+  priority_tags VARCHAR(500) NULL,
+  avoid_tags VARCHAR(500) NULL,
+  remark VARCHAR(1000) NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_preference_user (user_id),
+  CONSTRAINT fk_pref_user FOREIGN KEY (user_id) REFERENCES dc_user (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户选购偏好表';

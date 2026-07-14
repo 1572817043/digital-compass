@@ -1,0 +1,22 @@
+.DS_Store
+.env
+.env.*
+*.local
+*.tsbuildinfo
+
+# Java / Maven
+target/
+backend/target/
+backend/.idea/
+backend/*.iml
+backend/config/application-local.yml
+backend/config/application-*.local.yml
+
+# Node / Vite
+node_modules/
+dist/
+.vite/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/*.tsbuildinfo
